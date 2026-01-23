@@ -21,7 +21,7 @@ tmp/
 .env.test.local
 .env.production.local
 # Keep example file
-!.env.example
+.env.example
 
 # --- Python (Backend) ---
 __pycache__/
