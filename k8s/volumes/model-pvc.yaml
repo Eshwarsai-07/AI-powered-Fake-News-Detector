@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-pvc
+  namespace: fake-news-app
+  labels:
+    app: backend
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadOnlyMany  # Multiple backend pods can read the model
+  resources:
+    requests:
+      storage: 5Gi  # Request 5GB of storage
+  selector:
+    matchLabels:
+      type: local
+      app: fake-news-detector

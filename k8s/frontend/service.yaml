@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: fake-news-app
+  labels:
+    app: frontend
+    tier: ui
+spec:
+  type: NodePort  # Expose to outside the cluster
+  selector:
+    app: frontend  # Route traffic to pods with label "app: frontend"
+  ports:
+  - port: 80          # Service listens on port 80
+    targetPort: 80    # Forward to container port 80
+    nodePort: 30080   # External port to access the app
+    protocol: TCP
+    name: http
+  sessionAffinity: None  # Distribute requests evenly

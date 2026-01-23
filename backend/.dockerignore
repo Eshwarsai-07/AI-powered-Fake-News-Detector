@@ -1,0 +1,30 @@
+# Backend .dockerignore
+# Exclude unnecessary files to reduce image size
+model_training/
+tests/
+.git/
+.gitignore
+README.md
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
