@@ -86,3 +86,5 @@ model_training/saved_model/*
 # Ignore local docker volumes/data if mapped locally (optional safeguard)
 docker-data/
 mongo-data/
+model_training/notebooks/
+
