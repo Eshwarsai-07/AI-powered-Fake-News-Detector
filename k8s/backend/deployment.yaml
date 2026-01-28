@@ -30,7 +30,10 @@ spec:
         - name: MODEL_PATH
           value: "/app/models/fake-news-bert"
         - name: MONGODB_URI
-          value: "mongodb://mongo:27017"
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-atlas-secret
+              key: MONGODB_URI
         - name: DATABASE_NAME
           value: "fake_news_db"
         # AWS S3 Configuration for model storage
