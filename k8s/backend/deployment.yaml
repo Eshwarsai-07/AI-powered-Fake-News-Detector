@@ -52,7 +52,7 @@ spec:
             configMapKeyRef:
               name: backend-config
               key: AWS_REGION
-        # AWS Credentials - Removed for security (Using IAM Role instead)
+        # AWS Authentication - Zero-Secret Runtime (Uses EC2 IAM Instance Profile)
         resources:
           requests:
             memory: "512Mi"  # Minimum memory needed

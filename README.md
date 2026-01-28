@@ -65,9 +65,10 @@ All services are exposed via your **EC2 Public IP**:
 
 ## 🛡️ Security & Reliability
 
-- **IAM Instance Profile**: Applications authenticate to AWS services via temporary metadata tokens, not hardcoded secrets.
-- **NodePort Exposure**: Tools are secured via AWS Security Groups, allowing access only to specific management ports.
-- **Fail-Fast Logic**: The backend validates external dependencies (S3, MongoDB Atlas) at startup and logs detailed health metrics.
+- **Zero-Secret AWS Runtime**: The application uses an **IAM Instance Profile** on the EC2 host to access S3. No AWS Access Keys are ever stored or injected into Kubernetes.
+- **Secure Secret Management**: Non-AWS credentials (like the **MongoDB Atlas URI**) are injected via standard Kubernetes Secrets during the Ansible bootstrap phase, ensuring they are never committed to Git.
+- **NodePort Exposure**: Internal developer tools (Argo CD, Grafana, Prometheus) are secured via AWS Security Groups, allowing access only to specific management ports.
+- **Fail-Fast Backend**: The backend validates external dependencies at startup and logs detailed health metrics via standard Boto3 credential resolution.
 - **MongoDB Atlas**: Fully integrated for persistent prediction history.
 
 ---
