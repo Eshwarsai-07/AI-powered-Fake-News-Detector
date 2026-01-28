@@ -18,7 +18,7 @@
     mode: '0755'
 
 - name: Verify tool versions
-  command: "{{ item }} --version"
+  command: "{{ 'argocd version --client' if item == 'argocd' else item + ' version --client' if item == 'kubectl' else item + ' --version' }}"
   register: tool_versions
   with_items:
     - kind
