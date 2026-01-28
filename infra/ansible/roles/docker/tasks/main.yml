@@ -1,4 +1,18 @@
----
+- name: Check if swap file exists
+  stat:
+    path: /swapfile
+  register: swap_stat
+
+- name: Create swap file (4GB)
+  shell: |
+    fallocate -l 4G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+  when: not swap_stat.stat.exists
+  become: true
+
 - name: Update apt cache
   apt:
     update_cache: yes
