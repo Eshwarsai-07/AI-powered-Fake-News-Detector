@@ -49,3 +49,20 @@ DATABASE_NAME = os.getenv("DATABASE_NAME", "fake_news_db")
 
 # Model version for tracking predictions
 MODEL_VERSION = os.getenv("MODEL_VERSION", "fake-news-bert-v1")
+
+# AWS S3 configuration for model storage
+S3_BUCKET = os.getenv("S3_BUCKET")
+S3_MODEL_KEY = os.getenv("S3_MODEL_KEY")
+AWS_REGION = os.getenv("AWS_REGION")
+
+# Fail-fast validation
+if not all([S3_BUCKET, S3_MODEL_KEY, AWS_REGION]):
+    missing = [k for k, v in {
+        "S3_BUCKET": S3_BUCKET, 
+        "S3_MODEL_KEY": S3_MODEL_KEY, 
+        "AWS_REGION": AWS_REGION
+    }.items() if not v]
+    raise EnvironmentError(
+        f"❌ Missing mandatory AWS configuration: {', '.join(missing)}. "
+        "Check your environment variables or Kubernetes ConfigMap."
+    )

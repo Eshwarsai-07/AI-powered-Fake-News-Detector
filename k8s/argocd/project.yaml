@@ -1,0 +1,50 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: fake-news-detector
+  namespace: argocd
+spec:
+  description: AI Fake News Detector Application Project
+  
+  # Source repositories
+  sourceRepos:
+    - '*'  # Allow all repositories (restrict in production)
+  
+  # Destination clusters and namespaces
+  destinations:
+    - namespace: fake-news-app
+      server: https://kubernetes.default.svc
+    - namespace: fake-news-monitoring
+      server: https://kubernetes.default.svc
+  
+  # Cluster resource whitelist
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+    - group: ''
+      kind: PersistentVolume
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRole
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRoleBinding
+  
+  # Namespace resource whitelist (allow all in project namespaces)
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  
+  # Roles for RBAC
+  roles:
+    - name: read-only
+      description: Read-only access to applications
+      policies:
+        - p, proj:fake-news-detector:read-only, applications, get, fake-news-detector/*, allow
+      groups:
+        - developers
+    
+    - name: admin
+      description: Full access to applications
+      policies:
+        - p, proj:fake-news-detector:admin, applications, *, fake-news-detector/*, allow
+      groups:
+        - admins

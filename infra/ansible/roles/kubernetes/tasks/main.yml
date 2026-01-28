@@ -1,0 +1,32 @@
+---
+- name: Download Kind binary
+  get_url:
+    url: https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+    dest: /usr/local/bin/kind
+    mode: '0755'
+
+- name: Download Kubectl binary
+  get_url:
+    url: "https://dl.k8s.io/release/{{ lookup('pipe', 'curl -L -s https://dl.k8s.io/release/stable.txt') }}/bin/linux/amd64/kubectl"
+    dest: /usr/local/bin/kubectl
+    mode: '0755'
+
+- name: Download Argo CD CLI
+  get_url:
+    url: https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+    dest: /usr/local/bin/argocd
+    mode: '0755'
+
+- name: Verify tool versions
+  command: "{{ item }} --version"
+  register: tool_versions
+  with_items:
+    - kind
+    - kubectl
+    - argocd
+  changed_when: false
+
+- name: Print tool versions
+  debug:
+    msg: "{{ item.stdout }}"
+  with_items: "{{ tool_versions.results }}"

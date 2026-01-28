@@ -4,16 +4,23 @@ Production-grade prediction function with confidence-aware decision logic.
 This module provides an improved prediction interface that handles
 ambiguous inputs by introducing an "UNCERTAIN" category for low-confidence
 predictions, reducing false positives without retraining the model.
+
+Model Loading Strategy:
+1. Check if model exists locally
+2. If not, download from S3 (production)
+3. If S3 fails, fail fast with clear error
 """
 
 import logging
 from typing import Tuple, Dict, Any
 import re
+import os
+from pathlib import Path
 
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-from .config import MODEL_PATH, LABEL_MAP
+from .config import MODEL_PATH, LABEL_MAP, S3_BUCKET, S3_MODEL_KEY, AWS_REGION
 from .utils import clean_text, truncate_text
 
 
@@ -24,6 +31,89 @@ logger = logging.getLogger(__name__)
 CONFIDENCE_HIGH = 0.90      # Trust model output completely
 CONFIDENCE_MEDIUM = 0.60    # Uncertain zone begins
 MINIMUM_TEXT_LENGTH = 10    # Minimum characters after cleaning
+
+
+def download_model_from_s3(local_path: str, s3_bucket: str, s3_key: str, region: str) -> bool:
+    """
+    Download model files from S3 to local directory.
+    
+    This function is called on startup if the model doesn't exist locally.
+    It uses boto3 with IAM role or environment credentials (no hardcoded keys).
+    
+    Args:
+        local_path: Local directory to save model files
+        s3_bucket: S3 bucket name (e.g., 'fake-news-models')
+        s3_key: S3 key prefix (e.g., 'fake-news-bert')
+        region: AWS region (e.g., 'us-east-1')
+    
+    Returns:
+        True if download successful, False otherwise
+    
+    Raises:
+        Exception: If download fails after retries
+    """
+    try:
+        import boto3
+        from botocore.exceptions import ClientError, NoCredentialsError
+        
+        logger.info(f"Model not found locally. Downloading from S3...")
+        logger.info(f"S3 Location: s3://{s3_bucket}/{s3_key}/")
+        logger.info(f"Local Path: {local_path}")
+        
+        # Create S3 client (uses IAM role or environment credentials)
+        s3_client = boto3.client('s3', region_name=region)
+        
+        # Create local directory if it doesn't exist
+        Path(local_path).mkdir(parents=True, exist_ok=True)
+        
+        # List all objects in the S3 prefix
+        try:
+            response = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix=s3_key + '/')
+        except NoCredentialsError:
+            logger.error("AWS credentials not found. Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY or use IAM role.")
+            return False
+        except ClientError as e:
+            logger.error(f"Failed to list S3 objects: {e}")
+            return False
+        
+        if 'Contents' not in response:
+            logger.error(f"No files found in s3://{s3_bucket}/{s3_key}/")
+            return False
+        
+        # Download each file
+        files_downloaded = 0
+        for obj in response['Contents']:
+            s3_file_key = obj['Key']
+            
+            # Skip directory markers
+            if s3_file_key.endswith('/'):
+                continue
+            
+            # Get relative path (remove prefix)
+            relative_path = s3_file_key.replace(s3_key + '/', '', 1)
+            local_file_path = os.path.join(local_path, relative_path)
+            
+            # Create subdirectories if needed
+            os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
+            
+            # Download file
+            logger.info(f"Downloading: {s3_file_key} -> {local_file_path}")
+            try:
+                s3_client.download_file(s3_bucket, s3_file_key, local_file_path)
+                files_downloaded += 1
+            except ClientError as e:
+                logger.error(f"Failed to download {s3_file_key}: {e}")
+                return False
+        
+        logger.info(f"✓ Model download complete! Downloaded {files_downloaded} files from S3.")
+        return True
+        
+    except ImportError:
+        logger.error("boto3 not installed. Run: pip install boto3")
+        return False
+    except Exception as e:
+        logger.error(f"Unexpected error during S3 download: {e}")
+        return False
 
 
 class FakeNewsClassifier:
@@ -67,17 +157,56 @@ class FakeNewsClassifier:
         """
         Load the model and tokenizer from disk.
         
+        Strategy:
+        1. Check if model exists locally
+        2. If not, download from S3
+        3. Load model into memory
+        4. Apply optimizations (quantization, warmup)
+        
         Returns:
             True if loading was successful, False otherwise
         """
         try:
+            # Step 1: Check if model exists locally
+            model_path = Path(MODEL_PATH)
+            required_files = ['config.json', 'tokenizer_config.json']
+            model_exists = model_path.exists() and all(
+                (model_path / f).exists() for f in required_files
+            )
+            
+            # Step 2: Download from S3 if model doesn't exist locally
+            if not model_exists:
+                logger.warning(f"Model not found at: {MODEL_PATH}")
+                logger.info("Attempting to download model from S3...")
+                
+                # Download model from S3
+                download_success = download_model_from_s3(
+                    local_path=MODEL_PATH,
+                    s3_bucket=S3_BUCKET,
+                    s3_key=S3_MODEL_KEY,
+                    region=AWS_REGION
+                )
+                
+                if not download_success:
+                    logger.error("❌ FATAL: Model download from S3 failed.")
+                    logger.error("Please ensure:")
+                    logger.error("  1. AWS credentials are configured (IAM role or env vars)")
+                    logger.error(f"  2. S3 bucket '{S3_BUCKET}' exists and is accessible")
+                    logger.error(f"  3. Model files exist at s3://{S3_BUCKET}/{S3_MODEL_KEY}/")
+                    self._is_loaded = False
+                    return False
+                
+                logger.info("✓ Model downloaded successfully from S3")
+            else:
+                logger.info(f"✓ Model found locally at: {MODEL_PATH}")
+            
+            # Step 3: Load model and tokenizer
             logger.info(f"Loading model from: {MODEL_PATH}")
             logger.info(f"Using device: {self.device}")
             
             # Load tokenizer
             self.tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
             
-            # Load model
             # Load model
             self.model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
             
@@ -98,11 +227,11 @@ class FakeNewsClassifier:
             self._warmup()
             
             self._is_loaded = True
-            logger.info("Model loaded successfully!")
+            logger.info("✓ Model loaded successfully and ready for inference!")
             return True
             
         except Exception as e:
-            logger.error(f"Failed to load model: {str(e)}")
+            logger.error(f"❌ Failed to load model: {str(e)}")
             self._is_loaded = False
             return False
     

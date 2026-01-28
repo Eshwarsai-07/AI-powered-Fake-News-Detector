@@ -1,0 +1,13 @@
+# Local datasets
+data/*.csv
+data/*.tsv
+data/*.json
+
+# Training outputs (DO NOT COMMIT MODELS)
+saved_model/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Env
+.env

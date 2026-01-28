@@ -1,24 +1,10 @@
 # Dependencies
 node_modules/
 
-# Production build
+# Build output
 dist/
+build/
 
-# Environment variables
+# Env
 .env
-.env.local
-.env.*.local
-
-# Logs
-*.log
-npm-debug.log*
-
-# Editor directories
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# OS files
-.DS_Store
-Thumbs.db
+.env.*

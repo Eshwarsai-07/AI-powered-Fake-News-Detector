@@ -21,6 +21,8 @@ from .config import API_TITLE, API_DESCRIPTION, API_VERSION, CORS_ORIGINS, MODEL
 from .schemas import AnalyzeRequest, AnalyzeResponse, HealthResponse
 from .model import classifier
 from .database import mongodb
+from prometheus_fastapi_instrumentator import Instrumentator
+
 
 
 # Simple in-memory rate limiter
@@ -62,7 +64,6 @@ async def lifespan(app: FastAPI):
     yield  # Application runs here
     
     # Shutdown: Cleanup
-    logger.info("Shutting down...")
     logger.info("Shutting down...")
     await mongodb.disconnect()
 
@@ -114,6 +115,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Initialize Prometheus metrics
+Instrumentator().instrument(app).expose(app)
+
 
 
 @app.get("/", tags=["Root"])

@@ -1,0 +1,7 @@
+# Offline Training requirements
+pandas==2.1.4
+scikit-learn==1.3.2
+torch==2.1.2
+transformers==4.36.2
+accelerate==0.25.0
+boto3==1.34.14

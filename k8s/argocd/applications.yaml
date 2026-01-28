@@ -1,0 +1,150 @@
+---
+# App-of-Apps Pattern: Parent application that manages all child applications
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fake-news-detector
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: fake-news-detector
+  
+  source:
+    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    targetRevision: main
+    path: k8s
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+---
+# Backend Application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fake-news-backend
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: fake-news-detector
+  
+  source:
+    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    targetRevision: main
+    path: k8s/backend
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: fake-news-app
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+---
+# Frontend Application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fake-news-frontend
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: fake-news-detector
+  
+  source:
+    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    targetRevision: main
+    path: k8s/frontend
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: fake-news-app
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+# Ingress Application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fake-news-ingress
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: fake-news-detector
+  
+  source:
+    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    targetRevision: main
+    path: k8s/ingress
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: fake-news-app
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Monitoring Application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fake-news-monitoring
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: fake-news-detector
+  
+  source:
+    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    targetRevision: main
+    path: k8s/monitoring
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

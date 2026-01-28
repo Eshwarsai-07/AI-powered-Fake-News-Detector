@@ -1,24 +1,11 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environments
+# Python virtual env
 venv/
-env/
-.venv/
-
-# Environment variables
 .env
 
-# IDE
-.idea/
-.vscode/
-*.swp
+# Python cache
+__pycache__/
+*.pyc
 
-# OS files
-.DS_Store
-
-# Model files (mounted via Docker)
-*.pt
-*.bin
+# Test / coverage
+.coverage
+htmlcov/

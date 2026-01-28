@@ -1,0 +1,52 @@
+- name: Clone the repository
+  git:
+    repo: "{{ repo_url }}"
+    dest: /home/ubuntu/ai-fake-news-detector
+    force: yes
+
+- name: Create host model directory
+  file:
+    path: /mnt/data/model
+    state: directory
+    mode: '0777'
+    owner: ubuntu
+    group: ubuntu
+  become: true
+
+- name: Check if Kind cluster exists
+  command: kind get clusters
+  register: kind_clusters
+  changed_when: false
+
+- name: Create Kind cluster if not exists
+  command: kind create cluster --name ai-detector
+  when: "'ai-detector' not in kind_clusters.stdout"
+
+- name: Build Backend Docker image
+  docker_image:
+    build:
+      path: /home/ubuntu/ai-fake-news-detector/backend
+    name: fake-news-backend
+    tag: latest
+    source: build
+
+- name: Build Frontend Docker image
+  docker_image:
+    build:
+      path: /home/ubuntu/ai-fake-news-detector/frontend
+    name: fake-news-frontend
+    tag: latest
+    source: build
+
+- name: Load images into Kind
+  command: "kind load docker-image {{ item }} --name ai-detector"
+  loop:
+    - fake-news-backend:latest
+    - fake-news-frontend:latest
+
+- name: Create namespace if it doesn't exist
+  command: kubectl create namespace fake-news-app
+  ignore_errors: yes
+
+- name: Apply Kubernetes manifests
+  command: "kubectl apply -f /home/ubuntu/ai-fake-news-detector/k8s/ -n fake-news-app"

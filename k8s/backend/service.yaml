@@ -5,6 +5,7 @@ metadata:
   namespace: fake-news-app
   labels:
     app: backend
+    app: fake-news-backend  # Required for ServiceMonitor discovery
     tier: api
 spec:
   type: ClusterIP  # Internal service (not exposed to internet directly)

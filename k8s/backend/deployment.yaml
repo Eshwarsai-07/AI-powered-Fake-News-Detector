@@ -17,6 +17,8 @@ spec:
         app: backend
         tier: api
     spec:
+      # Use service account with IAM role for IRSA (EKS) or kiam/kube2iam
+      serviceAccountName: backend-sa
       containers:
       - name: backend
         image: fake-news-backend:latest  # Your Docker image
@@ -26,11 +28,32 @@ spec:
           name: http
         env:
         - name: MODEL_PATH
-          value: "/app/saved_model/fake-news-bert"
+          value: "/app/models/fake-news-bert"
         - name: MONGODB_URI
-          value: "mongodb://mongo:27017"  # Will be updated later
+          value: "mongodb://mongo:27017"
         - name: DATABASE_NAME
           value: "fake_news_db"
+        # AWS S3 Configuration for model storage
+        - name: S3_BUCKET
+          value: "fake-news-models"
+        - name: S3_MODEL_KEY
+          value: "fake-news-bert"
+        - name: AWS_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: AWS_REGION
+        # AWS Credentials
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: access-key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: secret-access-key
         resources:
           requests:
             memory: "512Mi"  # Minimum memory needed
@@ -42,19 +65,11 @@ spec:
           httpGet:
             path: /health
             port: 8000
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60  # Increased to allow S3 download
           periodSeconds: 10
         readinessProbe:  # Check if app is ready to serve traffic
           httpGet:
             path: /health
             port: 8000
-          initialDelaySeconds: 10
+          initialDelaySeconds: 30  # Increased to allow S3 download
           periodSeconds: 5
-        volumeMounts:
-        - name: model-storage
-          mountPath: /app/saved_model
-          readOnly: true
-      volumes:
-      - name: model-storage
-        persistentVolumeClaim:
-          claimName: model-pvc

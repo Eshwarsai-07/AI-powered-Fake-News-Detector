@@ -1,0 +1,15 @@
+# Terraform runtime
+.terraform/
+
+# State files (NEVER COMMIT)
+*.tfstate
+*.tfstate.backup
+terraform.tfstate
+terraform.tfstate.backup
+
+# Crash logs
+crash.log
+
+# Local override files
+*.tfvars
+*.tfvars.json

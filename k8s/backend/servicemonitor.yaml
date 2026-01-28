@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: fake-news-backend
+  namespace: fake-news-app
+  labels:
+    app: fake-news-backend
+    # This label is critical - it must match the serviceMonitorSelector in Prometheus CRD
+    # Default kube-prometheus-stack uses: release: kube-prometheus-stack
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: fake-news-backend
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s
+      scheme: http
+  namespaceSelector:
+    matchNames:
+      - fake-news-app
