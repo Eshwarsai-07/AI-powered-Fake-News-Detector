@@ -56,3 +56,10 @@ terraform.tfstate.backup
 # Kubernetes temp files
 # ======================
 *.kubeconfig
+
+# ======================
+# Secrets & Artifacts (CRITICAL)
+# ======================
+*.pem
+model_training/saved_model/
+infra/ansible/inventory.ini

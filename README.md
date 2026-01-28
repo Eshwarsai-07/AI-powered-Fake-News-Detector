@@ -1,159 +1,76 @@
 # AI Fake News Detector 🔍
 
-A production-ready web application for detecting fake news using a fine-tuned BERT model. Built with FastAPI (Python) and React, containerized with Docker.
+A production-ready ML platform for detecting fake news using a fine-tuned BERT model. This project demonstrates a full-stack AI application integrated with professional DevOps practices: **Infrastructure as Code (Terraform)**, **Configuration Automation (Ansible)**, and **GitOps (Argo CD)**.
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.109-green)
-![React](https://img.shields.io/badge/React-18-61dafb)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ed)
+![FastAPI](https://img.shields.io/badge/FastAPI-Green)
+![Terraform](https://img.shields.io/badge/Terraform-1.5+-purple)
+![Ansible](https://img.shields.io/badge/Ansible-Ready-red)
+![GitOps](https://img.shields.io/badge/GitOps-ArgoCD-orange)
 
-## 🏗️ Architecture
+---
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    FRONTEND (React 18)                       │
-│         Vite • Modern UI • Dark Theme • Responsive           │
-└────────────────────────────┬────────────────────────────────┘
-                             │ HTTP/JSON
-                             ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    BACKEND (FastAPI)                         │
-│  1. Receive text → 2. Preprocess → 3. BERT Inference         │
-│  Returns: { prediction: "Fake|Real", confidence: 0.0-1.0 }   │
-└────────────────────────────┬────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   ML MODEL (BERT)                            │
-│        Fine-tuned binary classifier (Fake=0, Real=1)         │
-│        Loaded once at startup using HuggingFace              │
-└─────────────────────────────────────────────────────────────┘
-```
+## 🏗️ Cloud Architecture
+
+The platform is designed to be fully automated and secure on AWS:
+
+1.  **Infrastructure (Terraform)**: Provisions VPC, S3 (for models), and an EC2 instance with an **IAM Instance Profile** (No long-lived AWS keys in the app!).
+2.  **Configuration (Ansible)**: Bootstraps the EC2 host with Docker, Kubernetes (Kind), and Argo CD.
+3.  **ML Lifecycle**: Models are trained offline and uploaded to S3. At startup, the Backend Pod downloads the model directly from S3 using IAM credentials.
+4.  **GitOps (Argo CD)**: Syncs Kubernetes manifests from the `main` branch to the cluster automatically.
+
+---
 
 ## 📁 Project Structure
 
-```
-fake-news-detector/
-├── model_training/              # Your trained model (existing)
-│   └── saved_model/
-│       └── fake-news-bert/      # BERT model files
-│
-├── backend/                     # FastAPI backend
-│   ├── app/
-│   │   ├── main.py              # API endpoints
-│   │   ├── model.py             # Model loading & inference
-│   │   ├── schemas.py           # Pydantic models
-│   │   ├── utils.py             # Text preprocessing
-│   │   └── config.py            # Configuration
-│   ├── requirements.txt
-│   └── Dockerfile
-│
-├── frontend/                    # React frontend
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── TextInput.jsx    # Input component
-│   │   │   └── ResultCard.jsx   # Result display
-│   │   ├── App.jsx              # Main component
-│   │   ├── api.js               # API client
-│   │   └── index.css            # Styling
-│   ├── package.json
-│   └── Dockerfile
-│
-├── docker-compose.yml           # Container orchestration
+```bash
+.
+├── infra/                  # Infrastructure as Code
+│   ├── terraform/          # AWS Provisioning (VPC, EC2, S3, IAM)
+│   └── ansible/            # Host Configuration (Docker, K8s, Argo CD)
+├── k8s/                    # Kubernetes Manifests (GitOps Source)
+├── backend/                # FastAPI ML Inference Service
+├── frontend/               # React User Interface
+├── model_training/         # Local training scripts & S3 uploader
 └── README.md
 ```
 
-## 🚀 Quick Start
+---
 
-### Option 1: Docker Compose (Recommended)
+## 🚀 Deployment Guide
 
+### 1. Provision & Bootstrap
+Deploy the entire cloud stack with one command:
 ```bash
-# Clone and navigate to the project
-cd fake-news-detector
-
-# Build and run all services
-docker-compose up --build
-
-# Access the application
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000
-# API Docs: http://localhost:8000/docs
+cd infra/terraform
+./setup.sh
 ```
 
-### Option 2: Run Locally
-
-#### Backend
-
+### 2. Upload ML Model
+Once the infrastructure is ready, upload your fine-tuned BERT model:
 ```bash
-# Navigate to backend directory
-cd backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the server
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+python model_training/upload_s3.py \
+  --model-dir model_training/saved_model/fake-news-bert \
+  --bucket <YOUR_TF_OUTPUT_BUCKET> \
+  --version v1
 ```
 
-#### Frontend
+### 3. Access the Stack
+All services are exposed via your **EC2 Public IP**:
+- **Application**: `http://<EC2_IP>:30080`
+- **Argo CD**: `http://<EC2_IP>:8080`
+- **Dashboards**: Grafana (`:3000`) & Prometheus (`:9090`)
 
-```bash
-# Navigate to frontend directory (new terminal)
-cd frontend
+---
 
-# Install dependencies
-npm install
+## 🛡️ Security & Reliability
 
-# Run development server
-npm run dev
+- **IAM Instance Profile**: Applications authenticate to AWS services via temporary metadata tokens, not hardcoded secrets.
+- **NodePort Exposure**: Tools are secured via AWS Security Groups, allowing access only to specific management ports.
+- **Fail-Fast Logic**: The backend validates external dependencies (S3, MongoDB Atlas) at startup and logs detailed health metrics.
+- **MongoDB Atlas**: Fully integrated for persistent prediction history.
 
-# Access at http://localhost:5173
-```
-
-## 📡 API Reference
-
-### Analyze Text
-
-**POST** `/analyze`
-
-Analyze news text for fake news detection.
-
-**Request:**
-```json
-{
-  "text": "Breaking news: Scientists discover revolutionary technology..."
-}
-```
-
-**Response:**
-```json
-{
-  "prediction": "Real",
-  "confidence": 0.9247
-}
-```
-
-**cURL Example:**
-```bash
-curl -X POST http://localhost:8000/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Scientists at MIT have developed a new solar panel technology that can generate electricity from thermal radiation at night."}'
-```
-
-### Health Check
-
-**GET** `/health`
-
-```json
-{
-  "status": "healthy",
-  "model_loaded": true
-}
-```
+---
 
 ## 🛠️ Tech Stack
 
@@ -161,56 +78,13 @@ curl -X POST http://localhost:8000/analyze \
 |-------|------------|
 | **AI Model** | BERT (Hugging Face Transformers) |
 | **Backend** | FastAPI, Python 3.10, PyTorch |
-| **Frontend** | React 18, Vite, Axios |
-| **Styling** | Vanilla CSS (Dark Theme) |
-| **Container** | Docker, Docker Compose |
-| **Server** | Uvicorn (ASGI), Nginx |
-
-## 📋 Features
-
-- ✅ **Real-time Analysis**: Instant fake news detection
-- ✅ **Confidence Scoring**: Probability-based results (0-100%)
-- ✅ **Modern UI**: Dark theme with responsive design
-- ✅ **Error Handling**: Graceful error states
-- ✅ **API Documentation**: Auto-generated Swagger UI
-- ✅ **Docker Ready**: One-command deployment
-- ✅ **Production Ready**: CORS, health checks, logging
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MODEL_PATH` | `../model_training/saved_model/fake-news-bert` | Path to saved model |
-| `CORS_ORIGINS` | `http://localhost:3000,http://localhost:5173` | Allowed CORS origins |
-| `VITE_API_URL` | `http://localhost:8000` | Backend API URL (frontend) |
-
-## 🧪 Testing
-
-### Backend Syntax Check
-```bash
-cd backend
-python -m py_compile app/main.py app/model.py app/schemas.py
-```
-
-### Frontend Build Test
-```bash
-cd frontend
-npm run build
-```
-
-## 📝 Notes
-
-- The model is loaded **once** at startup for optimal performance
-- Input text is automatically cleaned (HTML, URLs, extra whitespace removed)
-- Maximum input length is 10,000 characters (truncated for BERT's 512 token limit)
-- GPU acceleration is automatically used if available
-
-## 📄 License
-
-This project is for educational and demonstration purposes.
+| **Frontend** | React 18, Vite |
+| **Database** | MongoDB Atlas |
+| **Infrastructure** | Terraform, AWS (VPC, EC2, S3, IAM) |
+| **Orchestration** | Kubernetes (Kind), Ansible |
+| **Observability** | Prometheus, Grafana |
+| **CI/CD** | GitHub Actions, Argo CD |
 
 ---
 
-**Built with ❤️ using FastAPI & React**
+**Built for scalability and security. Ready for production demo.**

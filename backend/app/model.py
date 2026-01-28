@@ -70,10 +70,10 @@ def download_model_from_s3(local_path: str, s3_bucket: str, s3_key: str, region:
         try:
             response = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix=s3_key + '/')
         except NoCredentialsError:
-            logger.error("AWS credentials not found. Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY or use IAM role.")
+            logger.error("AWS credentials not found. Ensure the EC2 instance has the correct IAM Role attached.")
             return False
         except ClientError as e:
-            logger.error(f"Failed to list S3 objects: {e}")
+            logger.error(f"Failed to list S3 objects (Check IAM Role permissions): {e}")
             return False
         
         if 'Contents' not in response:

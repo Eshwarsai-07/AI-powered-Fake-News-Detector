@@ -46,17 +46,7 @@ spec:
             configMapKeyRef:
               name: backend-config
               key: AWS_REGION
-        # AWS Credentials
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: aws-credentials
-              key: access-key-id
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: aws-credentials
-              key: secret-access-key
+        # AWS Credentials - Removed for security (Using IAM Role instead)
         resources:
           requests:
             memory: "512Mi"  # Minimum memory needed
@@ -76,3 +66,11 @@ spec:
             port: 8000
           initialDelaySeconds: 30  # Increased to allow S3 download
           periodSeconds: 5
+        volumeMounts:
+        - name: model-storage
+          mountPath: /app/models
+      volumes:
+      - name: model-storage
+        hostPath:
+          path: /mnt/data/model
+          type: DirectoryOrCreate
