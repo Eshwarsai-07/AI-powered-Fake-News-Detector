@@ -13,6 +13,22 @@
     group: ubuntu
   become: true
 
+- name: Upload model to S3 from local machine
+  command: "aws s3 sync /Users/eshwarsai/Desktop/AI\\ Fake\\ News\\ Detector/model_training/saved_model/fake-news-bert/ s3://{{ model_bucket }}/model/"
+  delegate_to: localhost
+  become: false
+  run_once: true
+
+- name: Install AWS CLI on EC2
+  apt:
+    name: awscli
+    state: present
+  become: true
+
+- name: Download model from S3 to EC2
+  command: "aws s3 sync s3://{{ model_bucket }}/model/ /mnt/data/model/"
+  become: true
+
 - name: Check if Kind cluster exists
   command: kind get clusters
   register: kind_clusters
