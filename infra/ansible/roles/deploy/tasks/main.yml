@@ -61,6 +61,21 @@
   command: kubectl create namespace fake-news-app
   ignore_errors: yes
 
+- name: Create backend configuration ConfigMap
+  command: |
+    kubectl create configmap backend-config \
+      --from-literal=AWS_REGION={{ aws_region }} \
+      --from-literal=S3_BUCKET={{ model_bucket }} \
+      --from-literal=S3_MODEL_KEY=fake-news-bert \
+      -n fake-news-app --dry-run=client -o yaml | kubectl apply -f -
+
+- name: Create MongoDB Atlas secret
+  command: |
+    kubectl create secret generic mongodb-atlas-secret \
+      --from-literal=MONGODB_URI={{ mongodb_uri }} \
+      -n fake-news-app --dry-run=client -o yaml | kubectl apply -f -
+  when: mongodb_uri is defined and mongodb_uri != ""
+
 - name: Apply Kubernetes manifests
   command: "kubectl apply -f /home/ubuntu/ai-fake-news-detector/k8s/ -n fake-news-app"
 

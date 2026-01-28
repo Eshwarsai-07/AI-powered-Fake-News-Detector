@@ -39,12 +39,16 @@ read -sp "AWS Secret Access Key: " AWS_SECRET_ACCESS_KEY
 echo ""
 read -p "Git Repository URL: " GIT_REPO_URL
 echo ""
+read -p "MongoDB Atlas URI: " MONGODB_URI
+echo ""
 echo ""
 
 # Export credentials
 export AWS_ACCESS_KEY_ID
 export AWS_SECRET_ACCESS_KEY
 export TF_VAR_repo_url="$GIT_REPO_URL"
+
+# We will pass MONGODB_URI to Ansible later
 
 echo "✅ AWS credentials set"
 echo ""
@@ -141,7 +145,7 @@ if [ "$CONFIRM" = "yes" ]; then
                 # Disable host key checking just for this run to avoid prompts
                 export ANSIBLE_HOST_KEY_CHECKING=False
                 
-                ansible-playbook -i "$INVENTORY_FILE" "$PLAYBOOK_FILE"
+                ansible-playbook -i "$INVENTORY_FILE" "$PLAYBOOK_FILE" --extra-vars "mongodb_uri=$MONGODB_URI"
                 ANSIBLE_STATUS=$?
                 
                 if [ $ANSIBLE_STATUS -eq 0 ]; then

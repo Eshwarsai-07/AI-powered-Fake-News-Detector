@@ -36,11 +36,17 @@ spec:
               key: MONGODB_URI
         - name: DATABASE_NAME
           value: "fake_news_db"
-        # AWS S3 Configuration for model storage
+        # AWS S3 Configuration - Parametrized via ConfigMap
         - name: S3_BUCKET
-          value: "fake-news-models"
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: S3_BUCKET
         - name: S3_MODEL_KEY
-          value: "fake-news-bert"
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: S3_MODEL_KEY
         - name: AWS_REGION
           valueFrom:
             configMapKeyRef:
