@@ -51,11 +51,17 @@
     tag: latest
     source: build
 
-- name: Load images into Kind
-  command: "kind load docker-image {{ item }} --name ai-detector"
-  loop:
-    - fake-news-backend:latest
-    - fake-news-frontend:latest
+- name: Archive and load backend image into Kind (streaming)
+  shell: |
+    docker save fake-news-backend:latest | kind load image-archive /dev/stdin --name ai-detector
+  args:
+    executable: /bin/bash
+
+- name: Archive and load frontend image into Kind (streaming)
+  shell: |
+    docker save fake-news-frontend:latest | kind load image-archive /dev/stdin --name ai-detector
+  args:
+    executable: /bin/bash
 
 - name: Create namespace if it doesn't exist
   command: kubectl create namespace fake-news-app
