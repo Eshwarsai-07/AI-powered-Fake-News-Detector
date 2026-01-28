@@ -19,7 +19,20 @@
   changed_when: false
 
 - name: Create Kind cluster if not exists
-  command: kind create cluster --name ai-detector
+  command: "kind create cluster --name ai-detector --config /home/ubuntu/ai-fake-news-detector/infra/ansible/kind-config.yaml"
+  when: "'ai-detector' not in kind_clusters.stdout"
+
+- name: Install Nginx Ingress Controller
+  command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+  when: "'ai-detector' not in kind_clusters.stdout"
+
+- name: Wait for Ingress Controller to be ready
+  shell: |
+    kubectl wait --namespace ingress-nginx \
+      --for=condition=ready pod \
+      --selector=app.kubernetes.io/component=controller \
+      --timeout=90s
+  ignore_errors: yes
   when: "'ai-detector' not in kind_clusters.stdout"
 
 - name: Build Backend Docker image

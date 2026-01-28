@@ -4,3 +4,5 @@
   roles:
     - docker
     - kubernetes
+    - deploy
+    - monitoring
