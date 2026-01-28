@@ -27,3 +27,6 @@ nodes:
   - containerPort: 8080
     hostPort: 8080
     protocol: TCP
+  extraMounts:
+  - hostPath: /mnt/data/model
+    containerPath: /mnt/data/model

@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: fake-news-frontend:latest  # Your Docker image
-        imagePullPolicy: Never  # Use local image (for kind cluster)
+        image: Eshwarsai-07/fake-news-frontend:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80  # Nginx serves on port 80
           name: http

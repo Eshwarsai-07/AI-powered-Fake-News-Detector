@@ -22,6 +22,20 @@
   command: "kind create cluster --name ai-detector --config /home/ubuntu/ai-fake-news-detector/infra/ansible/kind-config.yaml"
   when: "'ai-detector' not in kind_clusters.stdout"
 
+- name: Create Argo CD Namespace
+  command: kubectl create namespace argocd
+  ignore_errors: yes
+
+- name: Install Argo CD
+  command: kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+- name: Wait for Argo CD to be ready
+  shell: |
+    kubectl wait --namespace argocd \
+      --for=condition=ready pod \
+      --selector=app.kubernetes.io/name=argocd-server \
+      --timeout=180s
+
 - name: Install Nginx Ingress Controller
   command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
   when: "'ai-detector' not in kind_clusters.stdout"
@@ -39,7 +53,7 @@
   docker_image:
     build:
       path: /home/ubuntu/ai-fake-news-detector/backend
-    name: fake-news-backend
+    name: Eshwarsai-07/fake-news-backend
     tag: latest
     source: build
 
@@ -47,7 +61,9 @@
   docker_image:
     build:
       path: /home/ubuntu/ai-fake-news-detector/frontend
-    name: fake-news-frontend
+      args:
+        VITE_API_URL: "/api"
+    name: Eshwarsai-07/fake-news-frontend
     tag: latest
     source: build
 
@@ -57,13 +73,13 @@
 
 - name: Archive and load backend image into Kind (streaming)
   shell: |
-    docker save fake-news-backend:latest | kind load image-archive /dev/stdin --name ai-detector
+    docker save Eshwarsai-07/fake-news-backend:latest | kind load image-archive /dev/stdin --name ai-detector
   args:
     executable: /bin/bash
 
 - name: Archive and load frontend image into Kind (streaming)
   shell: |
-    docker save fake-news-frontend:latest | kind load image-archive /dev/stdin --name ai-detector
+    docker save Eshwarsai-07/fake-news-frontend:latest | kind load image-archive /dev/stdin --name ai-detector
   args:
     executable: /bin/bash
 

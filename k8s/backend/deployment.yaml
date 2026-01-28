@@ -21,8 +21,8 @@ spec:
       serviceAccountName: backend-sa
       containers:
       - name: backend
-        image: fake-news-backend:latest  # Your Docker image
-        imagePullPolicy: Never  # Use local image (for kind cluster)
+        image: Eshwarsai-07/fake-news-backend:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000  # FastAPI runs on port 8000
           name: http

@@ -11,7 +11,7 @@ spec:
   project: fake-news-detector
   
   source:
-    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    repoURL: https://github.com/Eshwarsai-07/AI-powered-Fake-News-Detector.git  # Update with your repo
     targetRevision: main
     path: k8s
   
@@ -46,7 +46,7 @@ spec:
   project: fake-news-detector
   
   source:
-    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    repoURL: https://github.com/Eshwarsai-07/AI-powered-Fake-News-Detector.git  # Update with your repo
     targetRevision: main
     path: k8s/backend
   
@@ -80,7 +80,7 @@ spec:
   project: fake-news-detector
   
   source:
-    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    repoURL: https://github.com/Eshwarsai-07/AI-powered-Fake-News-Detector.git  # Update with your repo
     targetRevision: main
     path: k8s/frontend
   
@@ -108,7 +108,7 @@ spec:
   project: fake-news-detector
   
   source:
-    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    repoURL: https://github.com/Eshwarsai-07/AI-powered-Fake-News-Detector.git  # Update with your repo
     targetRevision: main
     path: k8s/ingress
   
@@ -134,7 +134,7 @@ spec:
   project: fake-news-detector
   
   source:
-    repoURL: https://github.com/YOUR_USERNAME/AI-Fake-News-Detector.git  # Update with your repo
+    repoURL: https://github.com/Eshwarsai-07/AI-powered-Fake-News-Detector.git  # Update with your repo
     targetRevision: main
     path: k8s/monitoring
   
