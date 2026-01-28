@@ -3,7 +3,7 @@ resource "local_file" "ansible_inventory" {
   
   content = <<-EOT
     [webservers]
-    ${aws_instance.server.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file="${abspath("${path.module}/ai-fake-news-detector-key.pem")}" ansible_ssh_common_args='-o StrictHostKeyChecking=no' repo_url=${var.repo_url} model_bucket=${aws_s3_bucket.model_bucket.id}
+    ${aws_instance.server.public_ip} ansible_user=ubuntu ansible_ssh_private_key_file="${abspath("${path.module}/ai-fake-news-detector-key.pem")}" ansible_ssh_common_args='-o StrictHostKeyChecking=no' repo_url=${var.repo_url} model_bucket=${aws_s3_bucket.model_bucket.id} aws_region=${var.aws_region}
   EOT
   
   filename = "${path.module}/../ansible/inventory.ini"

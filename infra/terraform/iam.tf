@@ -16,9 +16,9 @@ resource "aws_iam_role" "ec2_s3_role" {
   })
 }
 
-# 2. IAM Policy for S3 access
+# 2. IAM Policy for S3 access (Strictly READ-ONLY for Server)
 resource "aws_iam_role_policy" "s3_access_policy" {
-  name = "ai-fake-news-detector-s3-policy"
+  name = "ai-fake-news-detector-s3-read-policy"
   role = aws_iam_role.ec2_s3_role.id
 
   policy = jsonencode({
@@ -27,8 +27,7 @@ resource "aws_iam_role_policy" "s3_access_policy" {
       {
         Action   = [
           "s3:GetObject",
-          "s3:ListBucket",
-          "s3:PutObject"
+          "s3:ListBucket"
         ]
         Effect   = "Allow"
         Resource = [
