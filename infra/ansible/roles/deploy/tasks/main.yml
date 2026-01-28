@@ -68,7 +68,7 @@
   ignore_errors: yes
 
 - name: Create backend configuration ConfigMap
-  command: |
+  shell: |
     kubectl create configmap backend-config \
       --from-literal=AWS_REGION={{ aws_region }} \
       --from-literal=S3_BUCKET={{ model_bucket }} \
@@ -76,7 +76,7 @@
       -n fake-news-app --dry-run=client -o yaml | kubectl apply -f -
 
 - name: Create MongoDB Atlas secret
-  command: |
+  shell: |
     kubectl create secret generic mongodb-atlas-secret \
       --from-literal=MONGODB_URI={{ mongodb_uri }} \
       -n fake-news-app --dry-run=client -o yaml | kubectl apply -f -
