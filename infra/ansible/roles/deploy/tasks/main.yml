@@ -51,6 +51,10 @@
     tag: latest
     source: build
 
+- name: Prune Docker system to free space
+  command: docker system prune -af --volumes
+  ignore_errors: yes
+
 - name: Archive and load backend image into Kind (streaming)
   shell: |
     docker save fake-news-backend:latest | kind load image-archive /dev/stdin --name ai-detector
