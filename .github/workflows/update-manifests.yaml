@@ -52,9 +52,3 @@ jobs:
             git push
           fi
 
-      - name: Trigger ArgoCD sync (optional)
-        if: ${{ secrets.ARGOCD_SERVER != '' }}
-        run: |
-          echo "ArgoCD will auto-sync the changes"
-          # Optionally trigger manual sync:
-          # argocd app sync fake-news-detector --server ${{ secrets.ARGOCD_SERVER }}
