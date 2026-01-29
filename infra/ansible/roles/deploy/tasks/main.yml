@@ -19,11 +19,11 @@
     dest: /home/ubuntu/ai-fake-news-detector/docker-compose.yml
 
 - name: Start Application with Docker Compose
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: /home/ubuntu/ai-fake-news-detector
     state: present
-    build: yes
-    pull: yes
+    build: always
+    pull: always
   environment:
     MONGODB_URI: "{{ mongodb_uri }}"
     AWS_REGION: "{{ aws_region }}"
