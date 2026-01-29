@@ -20,7 +20,9 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from .config import API_TITLE, API_DESCRIPTION, API_VERSION, CORS_ORIGINS, MODEL_VERSION, API_KEY_NAME, API_KEY
 from .schemas import AnalyzeRequest, AnalyzeResponse, HealthResponse
 from .model import classifier
-from .database import mongodb
+from app.database import verify_db_connection
+# Trigger CI/CD Pipeline verification
+from app.model import analyze_news, load_model
 from prometheus_fastapi_instrumentator import Instrumentator
 
 
