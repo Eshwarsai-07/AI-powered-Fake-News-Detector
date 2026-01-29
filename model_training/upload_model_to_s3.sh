@@ -141,11 +141,12 @@ upload_model() {
     S3_PREFIX="models/${VERSION_TAG}"
     print_info "Uploading to: s3://${BUCKET_NAME}/${S3_PREFIX}/"
     
-    # Use Python script for reliable upload with logging
-    python3 "${SCRIPT_DIR}/upload_s3.py" \
-        --model-dir "$MODEL_DIR" \
-        --bucket "$BUCKET_NAME" \
-        --version "$VERSION_TAG"
+    # Use AWS CLI for reliable multipart upload
+    aws s3 sync "$MODEL_DIR" "s3://${BUCKET_NAME}/${S3_PREFIX}/" \
+        --exclude "*" \
+        --include "*.safetensors" \
+        --include "*.json" \
+        --include "*.txt"
     
     if [ $? -ne 0 ]; then
         print_error "Upload failed"
