@@ -87,3 +87,5 @@ resource "aws_instance" "server" {
     aws_route_table_association.public
   ]
 }
+
+
