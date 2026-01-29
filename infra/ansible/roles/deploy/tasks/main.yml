@@ -25,9 +25,9 @@
     build: always
     pull: always
   environment:
-    MONGODB_URI: "{{ mongodb_uri }}"
-    AWS_REGION: "{{ aws_region }}"
+    MONGODB_URI: "{{ mongodb_uri | default('mongodb://fake-news-mongodb:27017/fake_news_db') }}"
+    AWS_REGION: "{{ aws_region | default('ap-south-1') }}"
     S3_BUCKET: "{{ model_bucket }}"
-    S3_MODEL_KEY: "fake-news-bert" # Hardcoded to match upload script default
-    AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-    AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+    S3_MODEL_KEY: "models/bert-v1"
+    AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') | default('') }}"
+    AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') | default('') }}"
