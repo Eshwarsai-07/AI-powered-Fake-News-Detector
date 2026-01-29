@@ -106,7 +106,23 @@ if [ "$CONFIRM" = "yes" ]; then
         echo "=================================="
         echo ""
         
-        # 7. Ansible Integration
+        # 7. Model Upload Prompt
+        MODEL_BUCKET=$(terraform output -raw model_bucket_name)
+        echo ""
+        echo "⚠️  CRITICAL STEP: UPLOAD AI MODEL ⚠️"
+        echo "---------------------------------------"
+        echo "Before deploying the application, the AI model must be uploaded to S3."
+        echo "The backend service will fail to start if the model is missing."
+        echo ""
+        echo "👉 Open a NEW terminal, navigate to the project root, and run:"
+        echo ""
+        echo "bash model_training/upload_model_to_s3.sh"
+        echo ""
+        echo "---------------------------------------"
+        read -p "Once the upload is successful, press [ENTER] here to continue..."
+        echo ""
+        
+        # 8. Ansible Integration
         if command_exists ansible-playbook; then
             echo "🔄 Starting Ansible Configuration..."
             
@@ -174,8 +190,8 @@ if [ "$CONFIRM" = "yes" ]; then
         echo "Since the AI model is stored in S3 for production, you must upload it:"
         echo ""
         echo "1. Configure your LOCAL AWS credentials (or use existing ones)."
-        echo "2. Run this command from your LAPTOP terminal:"
-        echo "   python ../../model_training/upload_s3.py --model-dir ../../model_training/saved_model/fake-news-bert --bucket \$(terraform output -raw model_bucket_name) --version v1"
+        echo "2. Navigate to the project root and run:"
+        echo "   bash model_training/upload_model_to_s3.sh"
         echo ""
         echo "The server will automatically download the model from S3 using its IAM Role."
         echo ""
