@@ -1,4 +1,4 @@
-# AI Fake News Detector 🔍
+# AI-powered Fake News Detector (CI/CD Verified) 🚀 🔍
 
 A production-ready ML platform for detecting fake news using a fine-tuned BERT model. This project demonstrates a full-stack AI application integrated with professional DevOps practices: **Infrastructure as Code (Terraform)**, **Configuration Automation (Ansible)**, and **GitOps (Argo CD)**.
 
