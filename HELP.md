@@ -74,6 +74,10 @@ Use the provided script to stop the instance and save compute costs:
 ```bash
 ./scripts/start_ec2.sh
 ```
-*Note: After starting, wait 2-3 minutes for the Kubernetes cluster to boot up.*
+**CRITICAL: After the server starts:**
+1.  Copy the **NEW Public IP** output by the script.
+2.  Log in to **GoDaddy**.
+3.  Update your **A Record (@)** with this new IP.
+4.  Wait ~5 minutes, then your app at `http://eshwarsai.xyz:3000` will work again!
 
 ---
