@@ -35,12 +35,14 @@ jobs:
         run: |
           sed -i "s|image: .*/fake-news-backend:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/fake-news-backend:sha-${{ steps.sha.outputs.short_sha }}|g" \
             k8s/backend/deployment.yaml
+          sed -i "s|imagePullPolicy: .*|imagePullPolicy: Always|g" k8s/backend/deployment.yaml
 
       - name: Update frontend deployment manifest
         if: ${{ github.event.workflow_run.name == 'Frontend CI' }}
         run: |
           sed -i "s|image: .*/fake-news-frontend:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/fake-news-frontend:sha-${{ steps.sha.outputs.short_sha }}|g" \
             k8s/frontend/deployment.yaml
+          sed -i "s|imagePullPolicy: .*|imagePullPolicy: Always|g" k8s/frontend/deployment.yaml
 
       - name: Commit and push changes
         run: |
