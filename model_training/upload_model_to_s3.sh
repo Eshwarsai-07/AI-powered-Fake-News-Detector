@@ -141,10 +141,12 @@ upload_model() {
     S3_PREFIX="models/${VERSION_TAG}"
     print_info "Uploading to: s3://${BUCKET_NAME}/${S3_PREFIX}/"
     
-    # Use AWS CLI with tuned settings for slow connections
+    # Use AWS CLI with extremely conservative settings for unstable connections
     aws configure set default.s3.multipart_threshold 64MB
     aws configure set default.s3.multipart_chunksize 16MB
-    aws configure set default.s3.max_concurrent_requests 5
+    aws configure set default.s3.max_concurrent_requests 1
+    aws configure set default.retry_mode standard
+    aws configure set default.max_attempts 10
     
     aws s3 sync "$MODEL_DIR" "s3://${BUCKET_NAME}/${S3_PREFIX}/" \
         --cli-read-timeout 300 \
