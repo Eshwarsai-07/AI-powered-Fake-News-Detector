@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 TERRAFORM_DIR="${PROJECT_ROOT}/infra/terraform"
 MODEL_DIR="${SCRIPT_DIR}/saved_model/fake-news-bert"
 ENV_FILE="${PROJECT_ROOT}/.env"
