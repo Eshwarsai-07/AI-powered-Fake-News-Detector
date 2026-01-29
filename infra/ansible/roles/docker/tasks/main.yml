@@ -23,6 +23,7 @@
     name:
       - git
       - docker.io
+      - docker-compose-plugin
       - curl
       - apt-transport-https
       - ca-certificates
