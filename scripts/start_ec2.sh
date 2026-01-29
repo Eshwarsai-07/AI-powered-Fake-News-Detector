@@ -7,7 +7,16 @@ cd "$(dirname "$0")/../infra/terraform"
 # Get Instance ID
 INSTANCE_ID=$(terraform output -raw instance_id)
 
-echo "Starting EC2 Instance: $INSTANCE_ID..."
-aws ec2 start-instances --instance-ids "$INSTANCE_ID" --region ap-south-1
-echo "Instance starting. Please wait 2-3 minutes for Kubernetes to become active."
-echo "Application URL: http://3.7.117.77:3000"
+# Wait for IP to be assigned
+echo "Waiting for Public IP assignment..."
+sleep 5
+PUBLIC_IP=$(aws ec2 describe-instances --instance-ids "$INSTANCE_ID" --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
+
+echo "Instance Started!"
+echo "---------------------------------------------"
+echo "NEW Public IP: $PUBLIC_IP"
+echo "---------------------------------------------"
+echo "1. Go to GoDaddy DNS Management"
+echo "2. Update 'A' Record value to: $PUBLIC_IP"
+echo "3. App URL: http://eshwarsai.xyz:3000"
+echo "---------------------------------------------"
