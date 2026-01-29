@@ -54,6 +54,8 @@ output "connection_info" {
     - SSH:   22
     - HTTP:  80
     - HTTPS: 443
+    - Front: 3000
+    - API:   8000
     
     ML Model Storage:
     - S3 Bucket:  ${aws_s3_bucket.model_bucket.id}

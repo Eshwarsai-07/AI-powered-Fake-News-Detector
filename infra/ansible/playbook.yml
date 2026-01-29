@@ -3,6 +3,5 @@
   become: true
   roles:
     - docker
-    - kubernetes
     - deploy
     - monitoring

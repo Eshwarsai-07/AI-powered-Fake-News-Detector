@@ -29,7 +29,7 @@ resource "aws_security_group" "web_sg" {
   }
 
   ingress {
-    description = "Grafana"
+    description = "Frontend"
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
@@ -37,25 +37,9 @@ resource "aws_security_group" "web_sg" {
   }
 
   ingress {
-    description = "Prometheus"
-    from_port   = 9090
-    to_port     = 9090
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "Argo CD"
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "Frontend NodePort"
-    from_port   = 30080
-    to_port     = 30080
+    description = "Backend API"
+    from_port   = 8000
+    to_port     = 8000
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

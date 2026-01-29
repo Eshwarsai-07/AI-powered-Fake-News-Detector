@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: Eshwarsai-07/fake-news-frontend:latest
-        imagePullPolicy: IfNotPresent
+        image: ai-fake-news-detector-frontend:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 80  # Nginx serves on port 80
           name: http

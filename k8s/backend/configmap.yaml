@@ -5,10 +5,11 @@ metadata:
   namespace: fake-news-app
   labels:
     app: backend
+data:
   # AWS Configuration
   AWS_REGION: "ap-south-1"  # Matches Terraform default
-  S3_BUCKET: "fake-news-models"
-  S3_MODEL_KEY: "fake-news-bert"
+  S3_BUCKET: "fake-news-models-20260129062333399100000001"
+  S3_MODEL_KEY: "models/bert-v1"
   MODEL_PATH: "/app/saved_model/fake-news-bert"
   MODEL_VERSION: "v1.0"
   MAX_SEQUENCE_LENGTH: "512"

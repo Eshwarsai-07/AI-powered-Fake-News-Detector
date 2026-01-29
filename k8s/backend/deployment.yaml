@@ -17,12 +17,12 @@ spec:
         app: backend
         tier: api
     spec:
-      # Use service account with IAM role for IRSA (EKS) or kiam/kube2iam
-      serviceAccountName: backend-sa
+      securityContext:
+        fsGroup: 1000
       containers:
       - name: backend
-        image: Eshwarsai-07/fake-news-backend:latest
-        imagePullPolicy: IfNotPresent
+        image: ai-fake-news-detector-backend:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 8000  # FastAPI runs on port 8000
           name: http
@@ -77,6 +77,4 @@ spec:
           mountPath: /app/models
       volumes:
       - name: model-storage
-        hostPath:
-          path: /mnt/data/model
-          type: DirectoryOrCreate
+        emptyDir: {}
