@@ -19,11 +19,15 @@ echo "----------------------------------------------------"
 echo "Configuring Projects and Apps..."
 echo "----------------------------------------------------"
 
+# Resolve script directory to allow running from anywhere
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+
 # 4. Apply Project
-kubectl apply -f ../k8s/argocd/project.yaml
+kubectl apply -f "$REPO_ROOT/k8s/argocd/project.yaml"
 
 # 5. Apply App of Apps
-kubectl apply -f ../k8s/argocd/applications.yaml
+kubectl apply -f "$REPO_ROOT/k8s/argocd/applications.yaml"
 
 echo "----------------------------------------------------"
 echo "ArgoCD Setup Complete!"
