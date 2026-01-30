@@ -1,17 +1,15 @@
 # AI-Powered Fake News Detector
 
-A production-ready full-stack application to detect fake news using BERT and Deep Learning, deployed on Kubernetes with a complete GitOps CI/CD pipeline.
+A high-performance, cloud-native application that leverages Deep Learning (BERT) to detect misinformation in real-time. Built on a production-grade Kubernetes stack with fully automated GitOps delivery.
 
-## 📚 Documentation
+## 🏗️ Architecture
+![System Architecture](images/Architecture.png)
 
-We have moved all detailed documentation to the `docs/` folder:
+## 📖 Documentation
 
-- **[🔰 Complete Beginner's Guide](docs/COMPLETE_GUIDE.md)**: Start here! How to build, run, and understand the system.
-- **[🚀 CI/CD Pipeline Guide](docs/CI_CD_GUIDE.md)**: How GitHub Actions and GHCR work.
-- **[📊 Monitoring & Operations](docs/COMPLETE_GUIDE.md#3-accessing-the-system)**: Accessing Grafana and ArgoCD.
-- **[☸️ Deployment Details](docs/DEPLOYMENT_EXPLAINED.md)**: Deep dive into Kubernetes and Infrastructure.
-- **[🤖 Model Updates](docs/MODEL_UPDATE_GUIDE.md)**: How to retrain and update the AI model.
-
-## Quick Links
-- **App URL**: [http://eshwarsai.xyz:3000](http://eshwarsai.xyz:3000)
-- **Repository**: [GitHub Link](https://github.com/Eshwarsai-07/AI-powered-Fake-News-Detector)
+*   [**CI/CD Pipeline**](docs/01_cicd_pipeline.md) - GitHub Actions & Container Registry workflows.
+*   [**GitOps Delivery**](docs/02_gitops_with_argocd.md) - Automated synchronization via ArgoCD.
+*   [**Kubernetes Infrastructure**](docs/03_kubernetes_architecture.md) - Cluster design on AWS EC2 (Kind).
+*   [**Application Workflow**](docs/04_application_workflow.md) - Frontend-Backend interaction and routing.
+*   [**Observability**](docs/05_observability_monitoring.md) - Prometheus & Grafana monitoring stack.
+*   [**ML Inference Engine**](docs/06_ml_backend_inference.md) - BERT model serving and optimization.

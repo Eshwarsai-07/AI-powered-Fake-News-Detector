@@ -65,4 +65,4 @@ terraform.tfstate.backup
 model_training/saved_model/
 infra/ansible/inventory.ini
 CI_CD_GUIDE.md
-todo.txt
+# todo.txt
