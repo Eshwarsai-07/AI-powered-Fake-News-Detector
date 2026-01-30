@@ -1,0 +1,14 @@
+1. We can add HTTPS, but because we are using a "Kind" cluster on your own server (to save costs), it's a bit involved.
+
+⚠️ The Trade-off
+To enable HTTPS (Port 443), we must delete and re-create your Kubernetes cluster.
+
+Why? The current configuration only mapped specific ports (3000, 8000). We need to map standard web ports (80, 443) at the cluster creation time.
+Data Loss? Your MongoDB is in the cloud (Atlas), so No Data Loss. But we will need to re-run the deployment commands (about 10 mins of work).
+The Plan
+Start the Server (You stopped it).
+Delete Cluster (kind delete cluster).
+Update Config to expose ports 80 & 443.
+Create Cluster again.
+Install Ingress Controller & Cert-Manager (Tools that handle the certificates automatically).
+Do you want to proceed with this? (It will take about 15-20 mins).
