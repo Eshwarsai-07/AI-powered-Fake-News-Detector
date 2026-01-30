@@ -22,7 +22,7 @@ spec:
       containers:
       - name: backend
         image: ai-fake-news-detector-backend:latest
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000  # FastAPI runs on port 8000
           name: http
