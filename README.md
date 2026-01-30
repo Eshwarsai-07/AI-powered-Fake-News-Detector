@@ -1,6 +1,8 @@
-# AI-Powered Fake News Detector
+# 🕵️‍♂️ AI-Powered Fake News Detector
 
-A high-performance, cloud-native application that leverages Deep Learning (BERT) to detect misinformation in real-time. Built on a production-grade Kubernetes stack with fully automated GitOps delivery.
+A high-performance, cloud-native application that leverages **Deep Learning (BERT)** to detect misinformation in real-time. ⚡
+
+Built on a production-grade **Kubernetes** stack with fully automated **GitOps** delivery. 🚀
 
 ## 🏗️ Architecture
 ![System Architecture](images/Architecture.png)
