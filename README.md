@@ -4,6 +4,9 @@ A high-performance, cloud-native application that leverages **Deep Learning (BER
 
 Built on a production-grade **Kubernetes** stack with fully automated **GitOps** delivery. 🚀
 
+## 📊 Performance Results
+![System Architecture](images/perf-results.png)
+
 ## 🏗️ Architecture
 ![System Architecture](images/Architecture.png)
 

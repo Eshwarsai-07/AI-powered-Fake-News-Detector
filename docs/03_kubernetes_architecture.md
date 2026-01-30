@@ -8,7 +8,7 @@ The infrastructure runs on a single-node Kubernetes cluster orchestrated by **Ki
 ## Infrastructure Layers
 
 ### 1. Physical Layer (AWS)
-*   **Instance Type**: `t2.large` (2 vCPU, 8GB RAM) provided sufficient headroom for ML inference and orchestration overhead.
+*   **Instance Type**: `t3.medium` (2 vCPU, 4GB RAM) provided balances cost and performance for this workload.
 *   **OS**: Ubuntu 22.04 LTS.
 
 ### 2. Orchestration Layer (Kind)
