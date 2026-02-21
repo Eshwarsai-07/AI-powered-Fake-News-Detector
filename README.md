@@ -47,3 +47,8 @@ Built on a production-grade **Kubernetes** stack with fully automated **GitOps**
 * [**Ansible Configuration Management**](docs/09_ansible_configuration_management.md)  
   Automated server setup, installing Docker/Kind/Kubectl via playbooks.
 
+## 🎤 Interview Preparation Material
+Looking to present this project in an interview? I've generated an intense, production-focused interview preparation guide detailing the architecture, ML math, business impact, and 50 rigorous Q&A scenarios.
+*   [01: Structured Project Presentation](docs/interview_prep/01_presentation.md)
+*   [02: 50 Deep Interview Questions & Math](docs/interview_prep/02_interview_questions_part1.md)
+*   [03: Reverse Engineering & Stress Test](docs/interview_prep/03_reverse_engineering_and_stress_test.md)
